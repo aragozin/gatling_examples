@@ -10,16 +10,18 @@ class LinearRequestRateGrowRun extends CommonSimulation {
 	  val TARGET_RPS = Math.ceil(2.5 * LOAD_FACTOR).asInstanceOf[Int];
 
 	  println("Max target RPS: " + TARGET_RPS);
+          val TIME = 10 minutes;
+          println("Duration: " + TIME);
 
 		setUp(
 				scenario("Linear RPS")
 					.exec(Scripts.compositeWordpressLoad())
 
-					.inject(rampConcurrentUsers(2).to(USER_CAP).during (10 minutes))
+					.inject(rampConcurrentUsers(2).to(USER_CAP).during (TIME))
 
-					.throttle(jumpToRps(1), reachRps(2) in (15 seconds), reachRps(TARGET_RPS) in (585 seconds))
+					.throttle(jumpToRps(1), reachRps(2) in (15 seconds), reachRps(TARGET_RPS) in (TIME - 5.seconds))
 
 					.protocols(httpProtocol)
-		).maxDuration(10 minutes).disablePauses
+		).maxDuration(TIME + 1.minutes).disablePauses
 
 }
